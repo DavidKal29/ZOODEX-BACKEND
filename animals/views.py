@@ -10,4 +10,10 @@ def getAnimals(request):
     animals = Animals.objects.all()
     serializer = AnimalsSerializer(animals,many=True)
     return Response(serializer.data)
-    
+
+
+@api_view(['GET'])
+def getRandomAnimals(request):
+    random_animals = Animals.objects.order_by('?')[:12]
+    serializer = AnimalsSerializer(random_animals,many=True)
+    return Response(serializer.data)  
