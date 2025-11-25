@@ -16,4 +16,4 @@ def getAnimals(request):
 def getRandomAnimals(request):
     random_animals = Animals.objects.order_by('?')[:12]
     serializer = AnimalsSerializer(random_animals,many=True)
-    return Response(serializer.data)  
+    return Response({'success':'Animales obtenido con éxito','animals':serializer.data})  
