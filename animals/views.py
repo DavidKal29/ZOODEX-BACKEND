@@ -34,8 +34,58 @@ def getRandomAnimals(request):
                     'color':row[6]
                 })
 
-        return Response({'success':'Animales obtenido con éxito','animals':animals})  
+        return Response({'success':'Animales obtenidos con éxito','animals':animals})  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los animales','animals':animals})  
+        return Response({'error':'Error al obtener los animales'})  
+
+
+
+@api_view(['GET'])
+def getTop5Rankings(request):
+    try:
+        with connection.cursor() as cursor:
+
+            features = ['weight','height','speed','longevity','danger','inteligence']
+            titles = ['Más Pesados','Más Altos','Más Rapidos','Más Longevos','Más Peligrosos','Más Inteligentes']
+
+            rankings = {}
+
+            for i in range(len(features)):
+                query = '''
+                    SELECT a.id, a.name, a.{}, a.image, sc.name as subcategory, c.name as category
+                    FROM animals as a
+                    INNER JOIN subcategories as sc
+                    ON a.id_subcategory = sc.id
+                    INNER JOIN categories as c
+                    ON sc.id_category = c.id
+                    ORDER BY {} DESC
+                    LIMIT 5 
+                '''.format(features[i],features[i])
+                
+                cursor.execute(query)
+            
+                rows = cursor.fetchall()
+
+                animals = []
+                
+                for row in rows:
+                    animals.append({
+                        'id':row[0],
+                        'name':row[1],
+                        features[i]:row[2],
+                        'image':row[3],
+                        'subcategory':row[4],
+                        'category':row[5]
+                })
+                    
+                rankings[titles[i]] = animals
+
+        return Response({'success':'Rankings obtenidos con éxito','rankings':rankings})  
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener los rankings'}) 
+    
+
