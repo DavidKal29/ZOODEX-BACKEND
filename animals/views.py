@@ -9,14 +9,14 @@ def getRandomAnimals(request):
 
     with connection.cursor() as cursor:
         query = '''
-            SELECT a.id, a.name, t.name 
-            FROM byyaf0imkignvliwwex9.animals as a
-            INNER JOIN byyaf0imkignvliwwex9.animal_types as at
+            SELECT a.id, a.name, a.height, a.weight, a.image, t.name, t.color
+            FROM animals as a
+            INNER JOIN animal_types as at
             ON a.id = at.id_animal
-            INNER JOIN byyaf0imkignvliwwex9.types as t
+            INNER JOIN types as t
             ON at.id_type = t.id
             ORDER BY RAND()
-            LIMIT 12        
+            LIMIT 8    
         '''
         cursor.execute(query)
 
@@ -27,7 +27,11 @@ def getRandomAnimals(request):
             animals.append({
                 'id':row[0],
                 'name':row[1],
-                'type':row[2]
+                'height':row[2],
+                'weight':row[3],
+                'image':row[4],
+                'type':row[5],
+                'color':row[6]
             })
 
     return Response({'success':'Animales obtenido con éxito','animals':animals})  
