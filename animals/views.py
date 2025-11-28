@@ -87,5 +87,33 @@ def getTop5Rankings(request):
     except Exception as err:
         print(err)
         return Response({'error':'Error al obtener los rankings'}) 
+
+
+
+@api_view(['GET'])
+def getCategories(request):
+    try:
+        with connection.cursor() as cursor:
+            query = 'SELECT * FROM categories'
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+            categories = []
+
+            for row in rows:
+                categories.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'image':row[2],
+                    'color':row[3]
+                })
+
+            return Response({'success':'Categorias obtenidas con éxito','categories':categories})   
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener los rankings'}) 
+    
     
 
