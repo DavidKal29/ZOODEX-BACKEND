@@ -194,8 +194,8 @@ def getSubcategoryAnimals(request,name):
                 animals.append({
                     'id':row[0],
                     'name':row[1],
-                    'height':row[2],
-                    'weight':row[3],
+                    'category':row[2],
+                    'subcategory':row[3],
                     'image':row[4],
                     'type':row[5],
                     'color':row[6]
