@@ -101,6 +101,9 @@ def getCategories(request):
             rows = cursor.fetchall()
             categories = []
 
+            if len(rows) == 0:
+                return Response({'error':'No se han encontrado las categorias'}) 
+
             for row in rows:
                 categories.append({
                     'id':row[0],
@@ -113,7 +116,46 @@ def getCategories(request):
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los rankings'}) 
+        return Response({'error':'Error al obtener las categorias'}) 
+    
+@api_view(['GET'])
+def getSubCategories(request,name):
+    try:
+        with connection.cursor() as cursor:
+            name = name.upper()
+
+            print(name)
+
+            query = '''
+                SELECT sc.* FROM categories as c
+                INNER JOIN subcategories as sc
+                ON c.id = sc.id_category
+                WHERE c.name = %s
+            '''
+
+            cursor.execute(query,[name])
+
+            rows = cursor.fetchall()
+            subcategories = []
+
+            if len(rows) == 0:
+                return Response({'error':'Esa categoria no existe'}) 
+
+
+            for row in rows:
+                subcategories.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'image':row[2],
+                    'id_category':row[3],
+                    'color':row[4]
+                })
+
+            return Response({'success':'Subcategorias obtenidas con éxito','subcategories':subcategories})   
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener las subcategorias'}) 
     
     
 
