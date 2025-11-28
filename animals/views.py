@@ -9,12 +9,16 @@ def getRandomAnimals(request):
     try:
         with connection.cursor() as cursor:
             query = '''
-                SELECT a.id, a.name, a.height, a.weight, a.image, t.name, t.color
+                SELECT a.id, a.name, c.name, sc.name, a.image, t.name, t.color
                 FROM animals as a
                 INNER JOIN animal_types as at
                 ON a.id = at.id_animal
                 INNER JOIN types as t
                 ON at.id_type = t.id
+                INNER JOIN subcategories as sc
+                ON a.id_subcategory = sc.id
+                INNER JOIN categories as c
+                ON sc.id_category = c.id
                 ORDER BY RAND()
                 LIMIT 8    
             '''
@@ -27,8 +31,8 @@ def getRandomAnimals(request):
                 animals.append({
                     'id':row[0],
                     'name':row[1],
-                    'height':row[2],
-                    'weight':row[3],
+                    'category':row[2],
+                    'subcategory':row[3],
                     'image':row[4],
                     'type':row[5],
                     'color':row[6]
@@ -166,7 +170,7 @@ def getSubcategoryAnimals(request,name):
             name = name.upper()
 
             query = '''
-                SELECT a.id, a.name, a.height, a.weight, a.image, t.name, t.color
+                SELECT a.id, a.name, c.name, sc.name, a.image, t.name, t.color
                 FROM animals as a
                 INNER JOIN animal_types as at
                 ON a.id = at.id_animal
@@ -174,7 +178,9 @@ def getSubcategoryAnimals(request,name):
                 ON at.id_type = t.id
                 INNER JOIN subcategories as sc
                 ON a.id_subcategory = sc.id
-                WHERE sc.name = %s
+                INNER JOIN categories as c
+                ON sc.id_category = c.id
+                WHERE sc.name = %s 
             '''
             cursor.execute(query,[name])
 
