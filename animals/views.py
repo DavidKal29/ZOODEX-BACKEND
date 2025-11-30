@@ -93,11 +93,12 @@ def getTop5Rankings(request):
         return Response({'error':'Error al obtener los rankings'}) 
 
 
-
 @api_view(['GET'])
-def getCategories(request):
+def getAllFilters(request):
     try:
         with connection.cursor() as cursor:
+
+            #Obtenemos las Categorias primero
             query = 'SELECT * FROM categories'
 
             cursor.execute(query)
@@ -115,12 +116,33 @@ def getCategories(request):
                     'image':row[2],
                     'color':row[3]
                 })
+            
 
-            return Response({'success':'Categorias obtenidas con éxito','categories':categories})   
+            #Obtenemos ahora las dietas
+            query = 'SELECT * FROM diets'
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+            diets = []
+
+            if len(rows) == 0:
+                return Response({'error':'No se han encontrado las dietas'}) 
+
+            for row in rows:
+                diets.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'color':row[2],
+                    'description':row[3]
+                })
+
+            return Response({'success':'Datos obtenidos con éxito','categories':categories,'diets':diets})   
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener las categorias'}) 
+        return Response({'error':'Error al obtener los datos'}) 
+
     
 @api_view(['GET'])
 def getSubCategories(request,name):
@@ -206,6 +228,6 @@ def getSubcategoryAnimals(request,name):
     except Exception as err:
         print(err)
         return Response({'error':'Error al obtener los animales'})  
-    
+
     
 
