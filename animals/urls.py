@@ -7,4 +7,5 @@ urlpatterns = [
     path('getAllFilters/',views.getAllFilters,name='getAllFilters'),
     path('getSubCategories/<str:name>',views.getSubCategories,name='getSubCategories'),
     path('getSubcategoryAnimals/<str:name>',views.getSubcategoryAnimals,name='getSubcategoryAnimals'),
+    path('getDietAnimals/<str:name>',views.getDietAnimals,name='getDietAnimals'),
 ]

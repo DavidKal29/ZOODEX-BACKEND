@@ -228,6 +228,53 @@ def getSubcategoryAnimals(request,name):
     except Exception as err:
         print(err)
         return Response({'error':'Error al obtener los animales'})  
+    
+@api_view(['GET'])
+def getDietAnimals(request,name):
+    try:
+        with connection.cursor() as cursor:
+
+            name = name.capitalize()
+
+            query = '''
+                SELECT a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+                FROM animals as a
+                INNER JOIN animal_types as at
+                ON a.id = at.id_animal
+                INNER JOIN types as t
+                ON at.id_type = t.id
+                INNER JOIN diets as d
+                ON a.id_diet = d.id
+                INNER JOIN subcategories as sc
+                ON a.id_subcategory = sc.id
+                INNER JOIN categories as c
+                ON sc.id_category = c.id
+                WHERE d.name = %s 
+            '''
+            cursor.execute(query,[name])
+
+            rows = cursor.fetchall()
+
+            if len(rows) == 0:
+                return Response({'error':'Esa dieta no existe o está mal escrita'})
+
+            animals = []
+            for row in rows:
+                animals.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'category':row[2],
+                    'subcategory':row[3],
+                    'image':row[4],
+                    'type':row[5],
+                    'color':row[6]
+                })
+
+        return Response({'success':'Animales obtenidos con éxito','animals':animals})  
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener los animales'})  
 
     
 
