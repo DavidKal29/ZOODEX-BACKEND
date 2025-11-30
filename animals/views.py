@@ -137,7 +137,27 @@ def getAllFilters(request):
                     'description':row[3]
                 })
 
-            return Response({'success':'Datos obtenidos con éxito','categories':categories,'diets':diets})   
+
+            #Obtenemos los tipos
+            query = 'SELECT * FROM types'
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+            types = []
+
+            if len(rows) == 0:
+                return Response({'error':'No se han encontrado los tipos'}) 
+
+            for row in rows:
+                types.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'color':row[2],
+                    'description':row[3]
+                })
+
+            return Response({'success':'Datos obtenidos con éxito','categories':categories,'diets':diets, 'types':types})   
     
     except Exception as err:
         print(err)
