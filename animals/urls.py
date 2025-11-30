@@ -8,4 +8,5 @@ urlpatterns = [
     path('getSubCategories/<str:name>',views.getSubCategories,name='getSubCategories'),
     path('getSubcategoryAnimals/<str:name>',views.getSubcategoryAnimals,name='getSubcategoryAnimals'),
     path('getDietAnimals/<str:name>',views.getDietAnimals,name='getDietAnimals'),
+    path('getTypeAnimals/<str:name>',views.getTypeAnimals,name='getTypeAnimals'),
 ]
