@@ -129,6 +129,59 @@ def getTop5Rankings(request):
     except Exception as err:
         print(err)
         return Response({'error':'Error al obtener los rankings'}) 
+    
+@api_view(['GET'])
+def getFullRanking(request,name):
+    try:
+        with connection.cursor() as cursor:
+
+            features = ['weight','height','speed','longevity','danger','inteligence']
+            titles = ['Más Pesados','Más Altos','Más Rapidos','Más Longevos','Más Peligrosos','Más Inteligentes']
+
+            if name not in titles:
+                return Response({'error':'El ranking que intentas buscar no existe'})
+            
+            index = titles.index(name)
+
+            feature = features[index]
+
+            query = '''
+                SELECT a.{},a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+                FROM animals as a
+                INNER JOIN animal_types as at
+                ON a.id = at.id_animal
+                INNER JOIN types as t
+                ON at.id_type = t.id
+                INNER JOIN subcategories as sc
+                ON a.id_subcategory = sc.id
+                INNER JOIN categories as c
+                ON sc.id_category = c.id
+                ORDER BY {} DESC
+            '''.format(feature,feature)
+                
+            cursor.execute(query)
+            
+            rows = cursor.fetchall()
+
+            ranking = []
+                
+            for row in rows:
+                ranking.append({
+                    feature:row[0],
+                    'id':row[1],
+                    'name':row[2],
+                    'category':row[3],
+                    'subcategory':row[4],
+                    'image':row[5],
+                    'type':row[6],
+                    'color':row[7],
+                })
+
+            return Response({'success':'Ranking obtenido con éxito','ranking':ranking})  
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener el ranking'}) 
 
 
 @api_view(['GET'])
