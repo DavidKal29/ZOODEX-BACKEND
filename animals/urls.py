@@ -13,5 +13,6 @@ urlpatterns = [
     path('getTypeAnimals/<str:name>/<str:page>',views.getTypeAnimals,name='getTypeAnimals'),
     path('getAnimal/<str:name>', views.getAnimal, name='getAnimal'),
     path('getSearchAnimals/', views.getSearchAnimals, name='getSearchAnimals'),
-    path('login/',views.login,name='login')
+    path('login/',views.login,name='login'),
+    path('dashboard/',views.dashboard,name='dashboard')
 ]

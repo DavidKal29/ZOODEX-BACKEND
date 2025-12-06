@@ -695,4 +695,32 @@ def login(request):
     except Exception as err:
         print(err)
         return Response({'error':'Error al loguear usuario'})  
+    
+
+
+@api_view(['GET'])
+def dashboard(request):
+    try:
+        with connection.cursor() as cursor:
+            query = 'SELECT * FROM users WHERE id = %s'
+            cursor.execute(query,[request.user_id])
+
+            row = cursor.fetchone()
+
+            if row:
+                user = {
+                    'id':row[0],
+                    'email':row[1]
+                }
+
+                return Response({'success':'Perfil obtenido','user':user})
+            
+            else:
+                return Response({'error':'No se ha podido encontrar la cuenta'})
+
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener el usuario'})  
+
 
