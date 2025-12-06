@@ -7,7 +7,7 @@ import math
 @api_view(['GET'])
 def getAllAnimals(request,page):
     try:
-        int(page)
+        page = int(page)
 
         with connection.cursor() as cursor:
             query = '''
@@ -154,7 +154,7 @@ def getTop5Rankings(request):
 def getFullRanking(request,name,page):
     try:
         
-        int(page)
+        page = int(page)
 
         with connection.cursor() as cursor:
 
@@ -381,7 +381,7 @@ def getSubcategoryAnimals(request,name):
 @api_view(['GET'])
 def getDietAnimals(request,name,page):
     try:
-        int(page)
+        page = int(page)
         with connection.cursor() as cursor:
 
             name = name.capitalize()
@@ -446,7 +446,7 @@ def getDietAnimals(request,name,page):
 @api_view(['GET'])
 def getTypeAnimals(request,name,page):
     try:
-        int(page)
+        page = int(page)
         with connection.cursor() as cursor:
 
             name = name.capitalize()
