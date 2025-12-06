@@ -55,7 +55,6 @@ def getAllAnimals(request,page):
             'success':'Animales obtenidos con éxito',
             'animals':animals,
             'total':total,
-            'current_page':page,
             'total_pages':total_pages
         })  
     
@@ -152,8 +151,11 @@ def getTop5Rankings(request):
         return Response({'error':'Error al obtener los rankings'}) 
     
 @api_view(['GET'])
-def getFullRanking(request,name):
+def getFullRanking(request,name,page):
     try:
+        
+        int(page)
+
         with connection.cursor() as cursor:
 
             features = ['weight','height','speed','longevity','danger','inteligence']
@@ -167,7 +169,7 @@ def getFullRanking(request,name):
             feature = features[index]
 
             query = '''
-                SELECT a.{},a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+                SELECT COUNT(*) OVER(), a.{},a.id, a.name, c.name, sc.name, a.image, t.name, t.color
                 FROM animals as a
                 INNER JOIN animal_types as at
                 ON a.id = at.id_animal
@@ -178,27 +180,42 @@ def getFullRanking(request,name):
                 INNER JOIN categories as c
                 ON sc.id_category = c.id
                 ORDER BY {} DESC
+                LIMIT 30
+                OFFSET %s
             '''.format(feature,feature)
                 
-            cursor.execute(query)
+            offset = 30 * (page - 1)
+            cursor.execute(query,[offset])
             
             rows = cursor.fetchall()
 
             ranking = []
+            total = 0
                 
             for row in rows:
+                total = row[0]
                 ranking.append({
-                    feature:row[0],
-                    'id':row[1],
-                    'name':row[2],
-                    'category':row[3],
-                    'subcategory':row[4],
-                    'image':row[5],
-                    'type':row[6],
-                    'color':row[7],
+                    feature:row[1],
+                    'id':row[2],
+                    'name':row[3],
+                    'category':row[4],
+                    'subcategory':row[5],
+                    'image':row[6],
+                    'type':row[7],
+                    'color':row[8],
                 })
+        
+        total_pages = math.ceil(total/30)
 
-            return Response({'success':'Ranking obtenido con éxito','ranking':ranking})  
+        if page > total_pages:
+            return Response({'error':'El numero de pagina es mayor a las paginas permitidas'})
+
+        return Response({
+            'success':'Ranking obtenido con éxito',
+            'ranking':ranking,
+            'total':total,
+            'total_pages':total_pages
+        })    
     
     except Exception as err:
         print(err)
