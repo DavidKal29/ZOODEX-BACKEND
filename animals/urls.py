@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('getAllAnimals/', views.getAllAnimals, name='getAllAnimals'),
+    path('getAllAnimals/<int:page>', views.getAllAnimals, name='getAllAnimals'),
     path('getRandomAnimals/', views.getRandomAnimals, name='getRandomAnimals'),
     path('getTop5Rankings', views.getTop5Rankings, name='getTop5Rankings'),
     path('getFullRanking/<str:name>', views.getFullRanking, name='getFullRanking'),
