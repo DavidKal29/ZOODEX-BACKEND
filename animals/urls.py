@@ -9,8 +9,8 @@ urlpatterns = [
     path('getAllFilters/',views.getAllFilters,name='getAllFilters'),
     path('getSubCategories/<str:name>',views.getSubCategories,name='getSubCategories'),
     path('getSubcategoryAnimals/<str:name>',views.getSubcategoryAnimals,name='getSubcategoryAnimals'),
-    path('getDietAnimals/<str:name>',views.getDietAnimals,name='getDietAnimals'),
-    path('getTypeAnimals/<str:name>',views.getTypeAnimals,name='getTypeAnimals'),
+    path('getDietAnimals/<str:name>/<int:page>',views.getDietAnimals,name='getDietAnimals'),
+    path('getTypeAnimals/<str:name>/<int:page>',views.getTypeAnimals,name='getTypeAnimals'),
     path('getAnimal/<str:name>', views.getAnimal, name='getAnimal'),
     path('getSearchAnimals/', views.getSearchAnimals, name='getSearchAnimals'),
 ]
