@@ -3,6 +3,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.db import connection
 import math
+from django.contrib.auth.hashers import make_password,check_password
+import jwt
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 @api_view(['GET'])
 def getAllAnimals(request,page):
@@ -637,5 +644,55 @@ def getSearchAnimals(request):
 
 
 
+
+@api_view(['POST'])
+def login(request):
+    try:
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        with connection.cursor() as cursor:
+            
+            query = 'SELECT * FROM users WHERE email = %s'
+
+            cursor.execute(query,[email])
+
+            row = cursor.fetchone()
+
+            if row:
+                user = {
+                    'id': row[0],
+                    'email': row[1],
+                    'password': row[2]
+                }
+      
+                passwordMatches = check_password(password,user['password'])
+
+                if passwordMatches:
+                    payload = {
+                        'id':user['id'],
+                        'exp':datetime.utcnow() + timedelta(hours=1)
+                    }
+
+                    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+                    
+                    
+                    token = jwt.encode(payload,JWT_SECRET_KEY,algorithm='HS256')
+
+                    response = Response({'success':'Usuario logueado con éxito','userID':user['id']})
+
+                    response.set_cookie('token',token,httponly=True,secure=False,samesite='lax',max_age=36000)
+
+                    return response
+
+                else:
+                    return Response({'error':'Contraseña Incorrecta'})
+
+            else:
+                return Response({'error':'Email Incorrecto'})
+           
     
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al loguear usuario'})  
 
