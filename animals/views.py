@@ -8,7 +8,8 @@ import jwt
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
-from .serializers import EditProfileSerializer, LoginSerializer
+from .serializers import EditProfileSerializer, LoginSerializer, ForgotPasswordSerializer
+from utils.MailSender import MailSender
 
 load_dotenv()
 
@@ -644,8 +645,6 @@ def getSearchAnimals(request):
 
 
 
-
-
 @api_view(['POST'])
 def login(request):
     try:
@@ -805,7 +804,61 @@ def editProfile(request):
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al editar perfil del usuario'})  
+        return Response({'error':'Error al editar perfil del usuario'}) 
+
+
+
+
+@api_view(['POST'])
+def forgotPassword(request):
+    try:
+
+        serializer = ForgotPasswordSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            print(serializer.errors)
+            first_field = list(serializer.errors.keys())[0]
+            first_error = serializer.errors[first_field][0]
+
+            return Response({'error':first_error})   
+
+        email = request.data.get('email')
+
+        with connection.cursor() as cursor:
+            
+            query = 'SELECT email FROM users WHERE email = %s'
+
+            cursor.execute(query,[email])
+
+            row = cursor.fetchone()
+
+            if row:
+
+                payload = {
+                        'email':email,
+                        'exp':datetime.utcnow() + timedelta(minutes=5)
+                    }
+
+                JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+
+                token = jwt.encode(payload,JWT_SECRET_KEY,algorithm='HS256')  
+
+                query = 'UPDATE users SET token = %s WHERE email = %s' 
+
+                cursor.execute(query,[token,email])  
+
+                MailSender.reset_password_message(email,token)  
+
+                return Response({'success':'Correo enviado con éxito'})   
+
+            else:
+                return Response({'error':'No hay cuentas con ese email'})
+           
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al enviar el correo de recuperación'})  
+     
 
 
 

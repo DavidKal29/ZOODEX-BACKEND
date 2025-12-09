@@ -109,5 +109,28 @@ class EditProfileSerializer(serializers.Serializer):
                 data[key] = sanitize_input(value)
 
         return data
+    
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(
+        min_length=10,
+        max_length=100,
+        required=True,
+        error_messages={
+            'max_length': 'Máximo 100 caracteres en el email',
+            'min_length': 'Mínimo 10 caracteres en el email',
+            'required': 'El email es obligatorio',
+            'invalid': 'Debes poner un email válido',
+            'blank': 'El email no puede estar en blanco',
+        }
+    )
+
+    #Sanitizar los datos 
+    def validate(self, data):
+        for key, value in data.items():
+            if isinstance(value, str):
+                data[key] = sanitize_input(value)
+
+        return data
 
 
