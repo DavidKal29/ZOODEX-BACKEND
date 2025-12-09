@@ -14,6 +14,7 @@ class AdminMiddleware:
             '/dashboard/',
             '/logout/',
             '/editProfile/'
+            '/editAnimal/'
         ]
 
         ruta_protegida = False

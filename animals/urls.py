@@ -19,4 +19,5 @@ urlpatterns = [
     path('editProfile/',views.editProfile,name='editProfile'),
     path('forgotPassword/',views.forgotPassword,name='forgotPassword'),
     path('changePassword/<str:token>',views.changePassword,name='changePassword'),
+    path('editAnimal/<int:id>',views.editAnimal,name='editAnimal'),
 ]
