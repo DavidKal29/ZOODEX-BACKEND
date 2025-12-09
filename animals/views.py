@@ -737,6 +737,55 @@ def logout(request):
     except Exception as err:
         print(err)
         return Response({'error':'Error al cerrar la sesion'}) 
+    
+
+
+@api_view(['POST'])
+def editProfile(request):
+    try:
+        email = request.data.get('email')
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        with connection.cursor() as cursor:
+            
+            query = 'SELECT * FROM users WHERE id = %s'
+
+            cursor.execute(query,[request.user_id])
+
+            row = cursor.fetchone()
+
+            if row:
+                user = {
+                    'id': row[0],
+                    'email': row[1],
+                    'username': row[2],
+                    'password': row[3]
+                }
+
+                passwordMatches = check_password(password,user['password'])
+                
+                if email == user['email'] and username == user['username'] and (not password or passwordMatches):
+                    return Response({'error':'No hay cambios que realizar'})
+
+                query = 'UPDATE users SET email = %s, username = %s, password = %s WHERE id = %s'
+
+                if password:
+                    newPassword = make_password(password)
+                else:
+                    newPassword = user['password']
+
+                cursor.execute(query,[email,username,newPassword,user['id']])
+
+                return Response({'success':'Datos cambiados con éxito'})
+            
+            else:
+                return Response({'error':'Usuario no encontrado'})
+           
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al editar perfil del usuario'})  
 
 
 

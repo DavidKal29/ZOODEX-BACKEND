@@ -15,5 +15,6 @@ urlpatterns = [
     path('getSearchAnimals/', views.getSearchAnimals, name='getSearchAnimals'),
     path('login/',views.login,name='login'),
     path('dashboard/',views.dashboard,name='dashboard'),
-    path('logout/',views.logout,name='logout')
+    path('logout/',views.logout,name='logout'),
+    path('editProfile/',views.editProfile,name='editProfile'),
 ]

@@ -12,7 +12,8 @@ class AdminMiddleware:
     def __call__(self,request):
         rutas_protegidas = [
             '/dashboard/',
-            '/logout/'
+            '/logout/',
+            '/editProfile/'
         ]
 
         ruta_protegida = False
