@@ -8,6 +8,7 @@ import jwt
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
+from .serializers import EditProfileSerializer, LoginSerializer
 
 load_dotenv()
 
@@ -648,6 +649,16 @@ def getSearchAnimals(request):
 @api_view(['POST'])
 def login(request):
     try:
+
+        serializer = LoginSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            print(serializer.errors)
+            first_field = list(serializer.errors.keys())[0]
+            first_error = serializer.errors[first_field][0]
+
+            return Response({'error':first_error})   
+
         email = request.data.get('email')
         password = request.data.get('password')
 
@@ -743,6 +754,15 @@ def logout(request):
 @api_view(['POST'])
 def editProfile(request):
     try:
+        serializer = EditProfileSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            print(serializer.errors)
+            first_field = list(serializer.errors.keys())[0]
+            first_error = serializer.errors[first_field][0]
+
+            return Response({'error':first_error})
+
         email = request.data.get('email')
         username = request.data.get('username')
         password = request.data.get('password')
