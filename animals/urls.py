@@ -14,5 +14,6 @@ urlpatterns = [
     path('getAnimal/<str:name>', views.getAnimal, name='getAnimal'),
     path('getSearchAnimals/', views.getSearchAnimals, name='getSearchAnimals'),
     path('login/',views.login,name='login'),
-    path('dashboard/',views.dashboard,name='dashboard')
+    path('dashboard/',views.dashboard,name='dashboard'),
+    path('logout/',views.logout,name='logout')
 ]

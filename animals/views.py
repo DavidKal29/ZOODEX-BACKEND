@@ -653,7 +653,7 @@ def login(request):
 
         with connection.cursor() as cursor:
             
-            query = 'SELECT * FROM users WHERE email = %s'
+            query = 'SELECT id, email, password FROM users WHERE email = %s'
 
             cursor.execute(query,[email])
 
@@ -710,7 +710,8 @@ def dashboard(request):
             if row:
                 user = {
                     'id':row[0],
-                    'email':row[1]
+                    'email':row[1],
+                    'username':row[2]
                 }
 
                 return Response({'success':'Perfil obtenido','user':user})
@@ -721,6 +722,21 @@ def dashboard(request):
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener el usuario'})  
+        return Response({'error':'Error al obtener el usuario'}) 
+
+
+
+@api_view(['GET'])
+def logout(request):
+    try:
+        response = Response({'success':'Sesión cerrada con éxito'})
+        response.delete_cookie('token')
+        return response
+    
+
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al cerrar la sesion'}) 
+
 
 
