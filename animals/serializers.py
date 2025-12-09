@@ -167,3 +167,141 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 
+class EditAnimalSerializer(serializers.Serializer):
+    
+    name = serializers.CharField(
+        min_length=2,
+        max_length=30,
+        required=True,
+        error_messages={
+            'max_length': 'Máximo 30 caracteres en el nombre',
+            'min_length': 'Mínimo 2 caracteres en el nombre',
+            'required': 'El nombre es obligatorio',
+            'blank': 'El nombre no puede estar en blanco',
+        }
+    )
+
+    description = serializers.CharField(
+        min_length=10,
+        max_length=1000,
+        required=True,
+        error_messages={
+            'max_length': 'Máximo 1000 caracteres en la descripción',
+            'min_length': 'Mínimo 10 caracteres en la descripción',
+            'required': 'La descripción es obligatoria',
+            'blank': 'La descripción no puede estar en blanco',
+        }
+    )
+
+    subcategory = serializers.IntegerField(
+        min_value=1,
+        required=True,
+        error_messages={
+            'required': 'Debes seleccionar una subcategoría',
+            'invalid': 'Subcategoría inválida',
+        }
+    )
+    
+    type = serializers.IntegerField(
+        min_value=1,
+        required=True,
+        error_messages={
+            'required': 'Debes seleccionar un tipo',
+            'invalid': 'Tipo inválido',
+        }
+    )
+    
+    diet = serializers.IntegerField(
+        min_value=1,
+        required=True,
+        error_messages={
+            'required': 'Debes seleccionar una dieta',
+            'invalid': 'Dieta inválida',
+        }
+    )
+
+    weight = serializers.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        min_value=0.01,
+        max_value=20000,
+        required=True,
+        error_messages={
+            'max_digits': 'El peso no puede tener mas de 7 digitos',
+            'max_decimal_places': 'El peso solo puede tener 2 decimales',
+            'required': 'El peso es obligatorio',
+            'min_value': 'El peso no puede ser menor a 0.01 kg',
+            'max_value': 'El peso no puede ser mayor a 20000 kg',
+        }
+    )
+
+    height = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        min_value=0.01,
+        max_value=30,
+        required=True,
+        error_messages={
+            'max_digits': 'La altura no puede tener mas de 5 digitos',
+            'max_decimal_places': 'La altura solo puede tener 2 decimales',
+            'required': 'La altura es obligatoria',
+            'min_value': 'La altura no puede ser menor a 0.01 m',
+            'max_value': 'La altura no puede ser mayor a 30 m'
+        }
+    )
+
+
+    speed = serializers.IntegerField(
+        min_value=1,
+        max_value=100,
+        required=True,
+        error_messages={
+            'required': 'La velocidad es obligatoria',
+            'min_value': 'La velocidad no puede ser menor a 1',
+            'max_value': 'La velocidad no puede ser mayor a 100'
+        }
+    )
+
+    danger = serializers.IntegerField(
+        min_value=1,
+        max_value=100,
+        required=True,
+        error_messages={
+            'required': 'El nivel de peligro es obligatorio',
+            'min_value': 'El nivel de peligro no puede ser menor a 1',
+            'max_value': 'El nivel de peligro no puede ser mayor a 100'
+        }
+    )
+
+    longevity = serializers.IntegerField(
+        min_value=1,
+        max_value=100,
+        required=True,
+        error_messages={
+            'required': 'La longevidad es obligatoria',
+            'min_value': 'La longevidad no puede ser menor a 1',
+            'max_value': 'La longevidad no puede ser mayor a 100'
+        }
+    )
+
+    inteligence = serializers.IntegerField(
+        min_value=1,
+        max_value=100,
+        required=True,
+        error_messages={
+            'required': 'La inteligencia es obligatoria',
+            'min_value': 'La inteligencia no puede ser menor a 1',
+            'max_value': 'La inteligencia no puede ser mayor a 100'
+        }
+    )
+    
+    
+    #Sanitizar los datos 
+    def validate(self, data):
+        for key, value in data.items():
+            if isinstance(value, str):
+                data[key] = sanitize_input(value)
+
+        return data
+
+

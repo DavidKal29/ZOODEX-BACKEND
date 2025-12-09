@@ -9,7 +9,7 @@ from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
-from .serializers import EditProfileSerializer, LoginSerializer, ForgotPasswordSerializer, ChangePasswordSerializer
+from .serializers import EditProfileSerializer, LoginSerializer, ForgotPasswordSerializer, ChangePasswordSerializer, EditAnimalSerializer
 from utils.MailSender import MailSender
 
 load_dotenv()
@@ -991,6 +991,17 @@ def editAnimal(request,id):
         
         
         if request.method == 'POST':
+            serializer = EditAnimalSerializer(data=request.data)
+
+            if not serializer.is_valid():
+                print(serializer.errors)
+                first_field = list(serializer.errors.keys())[0]
+                first_error = serializer.errors[first_field][0]
+
+                return Response({'error':first_error})   
+
+
+
             with connection.cursor() as cursor:
                 newName = request.data.get('name')
                 subcategory = request.data.get('subcategory')

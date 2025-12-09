@@ -13,7 +13,7 @@ class AdminMiddleware:
         rutas_protegidas = [
             '/dashboard/',
             '/logout/',
-            '/editProfile/'
+            '/editProfile/',
             '/editAnimal/'
         ]
 
