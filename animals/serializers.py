@@ -132,5 +132,38 @@ class ForgotPasswordSerializer(serializers.Serializer):
                 data[key] = sanitize_input(value)
 
         return data
+    
+
+class ChangePasswordSerializer(serializers.Serializer): 
+    new_password = serializers.CharField(
+        min_length=8,
+        max_length=30,
+        required=True,
+        error_messages={
+            'max_length': 'Máximo 30 caracteres en la contraseña',
+            'min_length': 'Mínimo 8 caracteres en la contraseña',
+            'blank': 'La contraseña no puede estar en blanco',
+        }  
+    )
+
+    confirm_password = serializers.CharField(
+        min_length=8,
+        max_length=30,
+        required=True,
+        error_messages={
+            'max_length': 'Máximo 30 caracteres en la contraseña',
+            'min_length': 'Mínimo 8 caracteres en la contraseña',
+            'blank': 'La contraseña no puede estar en blanco',
+        }  
+    )
+
+    #Sanitizar los datos 
+    def validate(self, data):
+        for key, value in data.items():
+            if isinstance(value, str):
+                data[key] = sanitize_input(value)
+
+        return data
+
 
 

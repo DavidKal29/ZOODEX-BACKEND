@@ -18,4 +18,5 @@ urlpatterns = [
     path('logout/',views.logout,name='logout'),
     path('editProfile/',views.editProfile,name='editProfile'),
     path('forgotPassword/',views.forgotPassword,name='forgotPassword'),
+    path('changePassword/<str:token>',views.changePassword,name='changePassword'),
 ]
