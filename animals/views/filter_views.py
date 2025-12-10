@@ -1,0 +1,291 @@
+from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from django.db import connection
+import math
+from dotenv import load_dotenv
+
+load_dotenv()
+
+@api_view(['GET'])
+def getAllFilters(request):
+    try:
+        with connection.cursor() as cursor:
+
+            #Obtenemos las Categorias primero
+            query = 'SELECT * FROM categories'
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+            categories = []
+
+            if len(rows) == 0:
+                return Response({'error':'No se han encontrado las categorias'}) 
+
+            for row in rows:
+                categories.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'image':row[2],
+                    'color':row[3]
+                })
+            
+
+            #Obtenemos ahora las dietas
+            query = 'SELECT * FROM diets'
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+            diets = []
+
+            if len(rows) == 0:
+                return Response({'error':'No se han encontrado las dietas'}) 
+
+            for row in rows:
+                diets.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'color':row[2],
+                    'description':row[3]
+                })
+
+
+            #Obtenemos los tipos
+            query = 'SELECT * FROM types'
+
+            cursor.execute(query)
+
+            rows = cursor.fetchall()
+            types = []
+
+            if len(rows) == 0:
+                return Response({'error':'No se han encontrado los tipos'}) 
+
+            for row in rows:
+                types.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'color':row[2],
+                    'description':row[3]
+                })
+
+            return Response({'success':'Datos obtenidos con éxito','categories':categories,'diets':diets, 'types':types})   
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener los datos'}) 
+
+    
+@api_view(['GET'])
+def getSubCategories(request,name):
+    try:
+        with connection.cursor() as cursor:
+            name = name.upper()
+
+            print(name)
+
+            query = '''
+                SELECT sc.* FROM categories as c
+                INNER JOIN subcategories as sc
+                ON c.id = sc.id_category
+                WHERE c.name = %s
+            '''
+
+            cursor.execute(query,[name])
+
+            rows = cursor.fetchall()
+            subcategories = []
+
+            if len(rows) == 0:
+                return Response({'error':'Esa categoria no existe'}) 
+
+
+            for row in rows:
+                subcategories.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'image':row[2],
+                    'id_category':row[3],
+                    'color':row[4]
+                })
+
+            return Response({'success':'Subcategorias obtenidas con éxito','subcategories':subcategories})   
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener las subcategorias'}) 
+
+
+@api_view(['GET'])
+def getSubcategoryAnimals(request,name):
+    try:
+        with connection.cursor() as cursor:
+
+            name = name.upper()
+
+            query = '''
+                SELECT a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+                FROM animals as a
+                INNER JOIN animal_types as at
+                ON a.id = at.id_animal
+                INNER JOIN types as t
+                ON at.id_type = t.id
+                INNER JOIN subcategories as sc
+                ON a.id_subcategory = sc.id
+                INNER JOIN categories as c
+                ON sc.id_category = c.id
+                WHERE sc.name = %s 
+            '''
+            cursor.execute(query,[name])
+
+            rows = cursor.fetchall()
+
+            if len(rows) == 0:
+                return Response({'error':'Esa subcategoria no existe o está mal escrita'})
+
+            animals = []
+            for row in rows:
+                animals.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'category':row[2],
+                    'subcategory':row[3],
+                    'image':row[4],
+                    'type':row[5],
+                    'color':row[6]
+                })
+
+        return Response({'success':'Animales obtenidos con éxito','animals':animals})  
+    
+    except Exception as err:
+        print(err)
+        return Response({'error':'Error al obtener los animales'})  
+    
+@api_view(['GET'])
+def getDietAnimals(request,name,page):
+    try:
+        page = int(page)
+        with connection.cursor() as cursor:
+
+            name = name.capitalize()
+
+            query = '''
+                SELECT COUNT(*) OVER(), a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+                FROM animals as a
+                INNER JOIN animal_types as at
+                ON a.id = at.id_animal
+                INNER JOIN types as t
+                ON at.id_type = t.id
+                INNER JOIN diets as d
+                ON a.id_diet = d.id
+                INNER JOIN subcategories as sc
+                ON a.id_subcategory = sc.id
+                INNER JOIN categories as c
+                ON sc.id_category = c.id
+                WHERE d.name = %s
+                ORDER BY a.name
+                LIMIT 30
+                OFFSET %s
+            '''
+            
+            offset = 30 * (page - 1)
+            cursor.execute(query, [name, offset])
+            rows = cursor.fetchall()
+
+            if len(rows) == 0:
+                return Response({'error': 'Esa dieta no existe o está mal escrita'})
+
+            animals = []
+            total = 0
+            for row in rows:
+                total = row[0]
+                animals.append({
+                    'id': row[1],
+                    'name': row[2],
+                    'category': row[3],
+                    'subcategory': row[4],
+                    'image': row[5],
+                    'type': row[6],
+                    'color': row[7]
+                })
+
+        total_pages = math.ceil(total / 30)
+
+        if page > total_pages:
+            return Response({'error': 'El numero de pagina es mayor a las paginas permitidas'})
+
+        return Response({
+            'success': 'Animales obtenidos con éxito',
+            'animals': animals,
+            'total': total,
+            'total_pages': total_pages
+        })
+
+    except Exception as err:
+        print(err)
+        return Response({'error': 'Error al obtener los animales'})
+
+
+@api_view(['GET'])
+def getTypeAnimals(request,name,page):
+    try:
+        page = int(page)
+        with connection.cursor() as cursor:
+
+            name = name.capitalize()
+
+            query = '''
+                SELECT COUNT(*) OVER(), a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+                FROM animals as a
+                INNER JOIN animal_types as at
+                ON a.id = at.id_animal
+                INNER JOIN types as t
+                ON at.id_type = t.id
+                INNER JOIN subcategories as sc
+                ON a.id_subcategory = sc.id
+                INNER JOIN categories as c
+                ON sc.id_category = c.id
+                WHERE t.name = %s
+                ORDER BY a.name
+                LIMIT 30
+                OFFSET %s
+            '''
+
+            offset = 30 * (page - 1)
+            cursor.execute(query, [name, offset])
+            rows = cursor.fetchall()
+
+            if len(rows) == 0:
+                return Response({'error': 'Ese tipo no existe o está mal escrito'})
+
+            animals = []
+            total = 0
+            for row in rows:
+                total = row[0]
+                animals.append({
+                    'id': row[1],
+                    'name': row[2],
+                    'category': row[3],
+                    'subcategory': row[4],
+                    'image': row[5],
+                    'type': row[6],
+                    'color': row[7]
+                })
+
+        total_pages = math.ceil(total / 30)
+
+        if page > total_pages:
+            return Response({'error': 'El numero de pagina es mayor a las paginas permitidas'})
+
+        return Response({
+            'success': 'Animales obtenidos con éxito',
+            'animals': animals,
+            'total': total,
+            'total_pages': total_pages
+        })
+
+    except Exception as err:
+        print(err)
+        return Response({'error': 'Error al obtener los animales'})
