@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'animals',
     'authsystem',
+    'adminsystem',
     'corsheaders'
 ]
 
@@ -56,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'animals.middleware.AdminMiddleware',
+    'adminsystem.middleware.AdminMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

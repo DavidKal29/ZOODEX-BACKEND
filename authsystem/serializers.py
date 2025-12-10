@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
 from django.utils.html import escape
 import re
 

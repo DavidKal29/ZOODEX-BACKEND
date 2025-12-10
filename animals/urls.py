@@ -12,9 +12,5 @@ urlpatterns = [
     path('getDietAnimals/<str:name>/<str:page>',views.getDietAnimals,name='getDietAnimals'),
     path('getTypeAnimals/<str:name>/<str:page>',views.getTypeAnimals,name='getTypeAnimals'),
     path('getAnimal/<str:name>', views.getAnimal, name='getAnimal'),
-    path('getSearchAnimals/', views.getSearchAnimals, name='getSearchAnimals'),
-    path('dashboard/',views.dashboard,name='dashboard'),
-    path('logout/',views.logout,name='logout'),
-    path('editProfile/',views.editProfile,name='editProfile'),
-    path('editAnimal/<int:id>',views.editAnimal,name='editAnimal'),
+    path('getSearchAnimals/', views.getSearchAnimals, name='getSearchAnimals')
 ]
