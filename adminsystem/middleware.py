@@ -29,7 +29,7 @@ class AdminMiddleware:
             token = request.COOKIES.get('token')
 
             if not token:
-                return JsonResponse({'error':'EL token no ha sido encontrado'},status=401)
+                return JsonResponse({'error':'Error de autenticación, inicie sesión'},status=401)
 
             try:
                 decoded = jwt.decode(token,os.getenv('JWT_SECRET_KEY'),algorithms=['HS256'])
@@ -37,10 +37,10 @@ class AdminMiddleware:
                 request.user_id = decoded['id']           
             
             except InvalidTokenError:
-                return JsonResponse({'error':'Token erroneo'},status=401)
+                return JsonResponse({'error':'Error de autenticación, inicie sesión'},status=401)
             
             except ExpiredSignatureError:
-                return JsonResponse({'error':'Token expirado'},status=401)
+                return JsonResponse({'error':'Error de autenticación, inicie sesión'},status=401)
     
         return self.get_response(request)
             

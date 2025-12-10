@@ -131,17 +131,17 @@ class EditAnimalSerializer(serializers.Serializer):
     )
 
     weight = serializers.DecimalField(
-        max_digits=7,
+        max_digits=8,
         decimal_places=2,
         min_value=0.01,
-        max_value=20000,
+        max_value=200000,
         required=True,
         error_messages={
-            'max_digits': 'El peso no puede tener mas de 7 digitos',
+            'max_digits': 'El peso no puede tener mas de 8 digitos',
             'max_decimal_places': 'El peso solo puede tener 2 decimales',
             'required': 'El peso es obligatorio',
             'min_value': 'El peso no puede ser menor a 0.01 kg',
-            'max_value': 'El peso no puede ser mayor a 20000 kg',
+            'max_value': 'El peso no puede ser mayor a 200000 kg',
         }
     )
 
@@ -160,15 +160,18 @@ class EditAnimalSerializer(serializers.Serializer):
         }
     )
 
-
-    speed = serializers.IntegerField(
-        min_value=1,
-        max_value=100,
+    speed = serializers.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        min_value=0.01,
+        max_value=400,
         required=True,
         error_messages={
+            'max_digits': 'La velocidad no puede tener mas de 5 digitos',
+            'max_decimal_places': 'La velocidad solo puede tener 2 decimales',
             'required': 'La velocidad es obligatoria',
-            'min_value': 'La velocidad no puede ser menor a 1',
-            'max_value': 'La velocidad no puede ser mayor a 100'
+            'min_value': 'La velocidad no puede ser menor a 0.01 km/h',
+            'max_value': 'La velocidad no puede ser mayor a 400 km/h'
         }
     )
 
@@ -185,12 +188,12 @@ class EditAnimalSerializer(serializers.Serializer):
 
     longevity = serializers.IntegerField(
         min_value=1,
-        max_value=100,
+        max_value=500,
         required=True,
         error_messages={
             'required': 'La longevidad es obligatoria',
             'min_value': 'La longevidad no puede ser menor a 1',
-            'max_value': 'La longevidad no puede ser mayor a 100'
+            'max_value': 'La longevidad no puede ser mayor a 500'
         }
     )
 
