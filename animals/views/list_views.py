@@ -52,18 +52,18 @@ def getAllAnimals(request,page):
         total_pages = math.ceil(total/30)
 
         if page > total_pages:
-            return Response({'error':'El numero de pagina es mayor a las paginas permitidas'})
+            return Response({'error':'El numero de pagina es mayor a las paginas permitidas'},status=400)
             
         return Response({
             'success':'Animales obtenidos con éxito',
             'animals':animals,
             'total':total,
             'total_pages':total_pages
-        })  
+        },status=200)  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los animales'})  
+        return Response({'error':'Error al obtener los animales'},status=500)  
 
 @api_view(['GET'])
 def getRandomAnimals(request):
@@ -99,8 +99,8 @@ def getRandomAnimals(request):
                     'color':row[6]
                 })
 
-        return Response({'success':'Animales obtenidos con éxito','animals':animals})  
+        return Response({'success':'Animales obtenidos con éxito','animals':animals},status=200)  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los animales'})  
+        return Response({'error':'Error al obtener los animales'},status=500)  

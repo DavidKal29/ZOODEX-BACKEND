@@ -70,10 +70,10 @@ def getSearchAnimals(request):
                 })
 
             if len(animals) == 0:
-                return Response({'error':'No se han encontrado animales bajo esa búsqueda'})  
+                return Response({'error':'No se han encontrado animales bajo esa búsqueda'},status=404)  
 
-        return Response({'success':'Animales obtenidos con éxito','animals':animals})  
+        return Response({'success':'Animales obtenidos con éxito','animals':animals},status=200)  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los animales'})  
+        return Response({'error':'Error al obtener los animales'},status=500)  

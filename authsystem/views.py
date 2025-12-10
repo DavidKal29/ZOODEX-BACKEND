@@ -25,7 +25,7 @@ def login(request):
             first_field = list(serializer.errors.keys())[0]
             first_error = serializer.errors[first_field][0]
 
-            return Response({'error':first_error})   
+            return Response({'error':first_error},status=400)   
 
         email = request.data.get('email')
         password = request.data.get('password')
@@ -58,22 +58,22 @@ def login(request):
                     
                     token = jwt.encode(payload,JWT_SECRET_KEY,algorithm='HS256')
 
-                    response = Response({'success':'Usuario logueado con éxito','userID':user['id']})
+                    response = Response({'success':'Usuario logueado con éxito','userID':user['id']},status=200)
 
                     response.set_cookie('token',token,httponly=True,secure=False,samesite='lax',max_age=36000)
 
                     return response
 
                 else:
-                    return Response({'error':'Contraseña Incorrecta'})
+                    return Response({'error':'Contraseña Incorrecta'},status=400)
 
             else:
-                return Response({'error':'Email Incorrecto'})
+                return Response({'error':'Email Incorrecto'},status=400)
            
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al loguear usuario'})  
+        return Response({'error':'Error al loguear usuario'},status=500)  
     
 
 
@@ -88,7 +88,7 @@ def forgotPassword(request):
             first_field = list(serializer.errors.keys())[0]
             first_error = serializer.errors[first_field][0]
 
-            return Response({'error':first_error})   
+            return Response({'error':first_error},status=400)   
 
         email = request.data.get('email')
 
@@ -117,15 +117,15 @@ def forgotPassword(request):
 
                 MailSender.reset_password_message(email,token)  
 
-                return Response({'success':'Correo enviado con éxito'})   
+                return Response({'success':'Correo enviado con éxito'},status=200)   
 
             else:
-                return Response({'error':'No hay cuentas con ese email'})
+                return Response({'error':'No hay cuentas con ese email'},status=404)
            
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al enviar el correo de recuperación'})  
+        return Response({'error':'Error al enviar el correo de recuperación'},status=500)  
     
 
 @api_view(['POST'])
@@ -144,7 +144,7 @@ def changePassword(request,token):
             first_field = list(serializer.errors.keys())[0]
             first_error = serializer.errors[first_field][0]
 
-            return Response({'error':first_error})   
+            return Response({'error':first_error},status=400)   
 
         new_password = request.data.get('new_password')
         confirm_password = request.data.get('confirm_password')
@@ -157,29 +157,29 @@ def changePassword(request,token):
             row = cursor.fetchone()
 
             if not row:
-                return Response({'error':'Token Expirado'})
+                return Response({'error':'Token Expirado'},status=401)
                 
             if new_password != confirm_password:
-                return Response({'error':'Las contraseñas no coinciden'})
+                return Response({'error':'Las contraseñas no coinciden'},status=400)
                 
             old_password = row[0]
                 
             if check_password(new_password,old_password):
-                return Response({'error':'La nueva contraseña no puede ser igual a la anterior'})
+                return Response({'error':'La nueva contraseña no puede ser igual a la anterior'},status=400)
             
             hashed_password = make_password(new_password)
                 
             query = 'UPDATE users SET password = %s, token = "" WHERE email = %s'
             cursor.execute(query,[hashed_password,email])
 
-            return Response({'success':'Contraseña cambiada con éxito'})
+            return Response({'success':'Contraseña cambiada con éxito'},status=200)
 
     except ExpiredSignatureError as err:
-        return Response({'error':'Este enlace ha expirado, solicite recuperación de nuevo'})
+        return Response({'error':'Este enlace ha expirado, solicite recuperación de nuevo'},status=401)
         
     except InvalidTokenError as err:
-        return Response({'error':'Este enlace es invalido, solicite recuperación de nuevo'})     
+        return Response({'error':'Este enlace es invalido, solicite recuperación de nuevo'},status=401)     
            
     except Exception as err:
         print(err)
-        return Response({'error':'Error al cambiar la contraseña'})  
+        return Response({'error':'Error al cambiar la contraseña'},status=500)  

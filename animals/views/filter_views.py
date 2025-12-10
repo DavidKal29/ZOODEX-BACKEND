@@ -21,7 +21,7 @@ def getAllFilters(request):
             categories = []
 
             if len(rows) == 0:
-                return Response({'error':'No se han encontrado las categorias'}) 
+                return Response({'error':'No se han encontrado las categorias'}, status=404) 
 
             for row in rows:
                 categories.append({
@@ -41,7 +41,7 @@ def getAllFilters(request):
             diets = []
 
             if len(rows) == 0:
-                return Response({'error':'No se han encontrado las dietas'}) 
+                return Response({'error':'No se han encontrado las dietas'},status=404) 
 
             for row in rows:
                 diets.append({
@@ -61,7 +61,7 @@ def getAllFilters(request):
             types = []
 
             if len(rows) == 0:
-                return Response({'error':'No se han encontrado los tipos'}) 
+                return Response({'error':'No se han encontrado los tipos'},status=404) 
 
             for row in rows:
                 types.append({
@@ -71,11 +71,11 @@ def getAllFilters(request):
                     'description':row[3]
                 })
 
-            return Response({'success':'Datos obtenidos con éxito','categories':categories,'diets':diets, 'types':types})   
+            return Response({'success':'Datos obtenidos con éxito','categories':categories,'diets':diets, 'types':types},status=200)   
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los datos'}) 
+        return Response({'error':'Error al obtener los datos'},status=500) 
 
     
 @api_view(['GET'])
@@ -99,7 +99,7 @@ def getSubCategories(request,name):
             subcategories = []
 
             if len(rows) == 0:
-                return Response({'error':'Esa categoria no existe'}) 
+                return Response({'error':'Esa categoria no existe'},status=404) 
 
 
             for row in rows:
@@ -111,11 +111,11 @@ def getSubCategories(request,name):
                     'color':row[4]
                 })
 
-            return Response({'success':'Subcategorias obtenidas con éxito','subcategories':subcategories})   
+            return Response({'success':'Subcategorias obtenidas con éxito','subcategories':subcategories},status=200)   
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener las subcategorias'}) 
+        return Response({'error':'Error al obtener las subcategorias'},status=500) 
 
 
 @api_view(['GET'])
@@ -143,7 +143,7 @@ def getSubcategoryAnimals(request,name):
             rows = cursor.fetchall()
 
             if len(rows) == 0:
-                return Response({'error':'Esa subcategoria no existe o está mal escrita'})
+                return Response({'error':'Esa subcategoria no existe o está mal escrita'},status=404)
 
             animals = []
             for row in rows:
@@ -157,11 +157,11 @@ def getSubcategoryAnimals(request,name):
                     'color':row[6]
                 })
 
-        return Response({'success':'Animales obtenidos con éxito','animals':animals})  
+        return Response({'success':'Animales obtenidos con éxito','animals':animals},status=200)  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los animales'})  
+        return Response({'error':'Error al obtener los animales'},status=500)  
     
 @api_view(['GET'])
 def getDietAnimals(request,name,page):
@@ -195,7 +195,7 @@ def getDietAnimals(request,name,page):
             rows = cursor.fetchall()
 
             if len(rows) == 0:
-                return Response({'error': 'Esa dieta no existe o está mal escrita'})
+                return Response({'error': 'Esa dieta no existe o está mal escrita'},status=404)
 
             animals = []
             total = 0
@@ -214,18 +214,18 @@ def getDietAnimals(request,name,page):
         total_pages = math.ceil(total / 30)
 
         if page > total_pages:
-            return Response({'error': 'El numero de pagina es mayor a las paginas permitidas'})
+            return Response({'error': 'El numero de pagina es mayor a las paginas permitidas'},status=400)
 
         return Response({
             'success': 'Animales obtenidos con éxito',
             'animals': animals,
             'total': total,
             'total_pages': total_pages
-        })
+        },status=200)
 
     except Exception as err:
         print(err)
-        return Response({'error': 'Error al obtener los animales'})
+        return Response({'error': 'Error al obtener los animales'},status=500)
 
 
 @api_view(['GET'])
@@ -258,7 +258,7 @@ def getTypeAnimals(request,name,page):
             rows = cursor.fetchall()
 
             if len(rows) == 0:
-                return Response({'error': 'Ese tipo no existe o está mal escrito'})
+                return Response({'error': 'Ese tipo no existe o está mal escrito'},status=404)
 
             animals = []
             total = 0
@@ -277,15 +277,15 @@ def getTypeAnimals(request,name,page):
         total_pages = math.ceil(total / 30)
 
         if page > total_pages:
-            return Response({'error': 'El numero de pagina es mayor a las paginas permitidas'})
+            return Response({'error': 'El numero de pagina es mayor a las paginas permitidas'},status=400)
 
         return Response({
             'success': 'Animales obtenidos con éxito',
             'animals': animals,
             'total': total,
             'total_pages': total_pages
-        })
+        },status=200)
 
     except Exception as err:
         print(err)
-        return Response({'error': 'Error al obtener los animales'})
+        return Response({'error': 'Error al obtener los animales'},status=500)

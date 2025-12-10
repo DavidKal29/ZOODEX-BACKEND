@@ -47,11 +47,11 @@ def getTop5Rankings(request):
                     
                 rankings[titles[i]] = animals
 
-        return Response({'success':'Rankings obtenidos con éxito','rankings':rankings})  
+        return Response({'success':'Rankings obtenidos con éxito','rankings':rankings},status=200)  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener los rankings'}) 
+        return Response({'error':'Error al obtener los rankings'},status=500) 
     
 @api_view(['GET'])
 def getFullRanking(request,name,page):
@@ -65,7 +65,7 @@ def getFullRanking(request,name,page):
             titles = ['Más Pesados','Más Altos','Más Rapidos','Más Longevos','Más Peligrosos','Más Inteligentes']
 
             if name not in titles:
-                return Response({'error':'El ranking que intentas buscar no existe'})
+                return Response({'error':'El ranking que intentas buscar no existe'},status=404)
             
             index = titles.index(name)
 
@@ -111,15 +111,15 @@ def getFullRanking(request,name,page):
         total_pages = math.ceil(total/30)
 
         if page > total_pages:
-            return Response({'error':'El numero de pagina es mayor a las paginas permitidas'})
+            return Response({'error':'El numero de pagina es mayor a las paginas permitidas'},status=400)
 
         return Response({
             'success':'Ranking obtenido con éxito',
             'ranking':ranking,
             'total':total,
             'total_pages':total_pages
-        })    
+        },status=200)    
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener el ranking'}) 
+        return Response({'error':'Error al obtener el ranking'},status=500) 

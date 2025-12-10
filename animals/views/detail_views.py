@@ -33,7 +33,7 @@ def getAnimal(request,name):
             row = cursor.fetchone()
 
             if not row:
-                return Response({'error':'Animal no encontrado'})
+                return Response({'error':'Animal no encontrado'},status=404)
 
             animal = {
                 'id':row[0],
@@ -54,11 +54,11 @@ def getAnimal(request,name):
             }
        
 
-        return Response({'success':'Animal obtenido con éxito','animal':animal})  
+        return Response({'success':'Animal obtenido con éxito','animal':animal},status=200)  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener al animal'})  
+        return Response({'error':'Error al obtener al animal'},status=500)  
 
 
 

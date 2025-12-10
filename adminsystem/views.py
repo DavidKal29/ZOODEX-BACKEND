@@ -23,29 +23,29 @@ def dashboard(request):
                     'username':row[2]
                 }
 
-                return Response({'success':'Perfil obtenido','user':user})
+                return Response({'success':'Perfil obtenido','user':user},status=200)
             
             else:
-                return Response({'error':'No se ha podido encontrar la cuenta'})
+                return Response({'error':'No se ha podido encontrar la cuenta'},status=404)
 
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al obtener el usuario'}) 
+        return Response({'error':'Error al obtener el usuario'},status=500) 
 
 
 
 @api_view(['GET'])
 def logout(request):
     try:
-        response = Response({'success':'Sesión cerrada con éxito'})
+        response = Response({'success':'Sesión cerrada con éxito'},status=200)
         response.delete_cookie('token')
         return response
     
 
     except Exception as err:
         print(err)
-        return Response({'error':'Error al cerrar la sesion'}) 
+        return Response({'error':'Error al cerrar la sesion'},status=500) 
     
 
 
@@ -59,7 +59,7 @@ def editProfile(request):
             first_field = list(serializer.errors.keys())[0]
             first_error = serializer.errors[first_field][0]
 
-            return Response({'error':first_error})
+            return Response({'error':first_error},status=400)
 
         email = request.data.get('email')
         username = request.data.get('username')
@@ -84,7 +84,7 @@ def editProfile(request):
                 passwordMatches = check_password(password,user['password'])
                 
                 if email == user['email'] and username == user['username'] and (not password or passwordMatches):
-                    return Response({'error':'Asegurate que al menos un campo sea distinto'})
+                    return Response({'error':'Asegurate que al menos un campo sea distinto'},status=400)
 
                 query = 'UPDATE users SET email = %s, username = %s, password = %s WHERE id = %s'
 
@@ -95,15 +95,15 @@ def editProfile(request):
 
                 cursor.execute(query,[email,username,newPassword,user['id']])
 
-                return Response({'success':'Datos cambiados con éxito'})
+                return Response({'success':'Datos cambiados con éxito'},status=200)
             
             else:
-                return Response({'error':'Usuario no encontrado'})
+                return Response({'error':'Usuario no encontrado'},status=404)
            
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al editar perfil del usuario'}) 
+        return Response({'error':'Error al editar perfil del usuario'},status=500) 
 
 
 @api_view(['GET','POST'])
@@ -133,7 +133,7 @@ def editAnimal(request,id):
                 row = cursor.fetchone()
 
                 if not row:
-                    return Response({'error':'Animal no encontrado'})
+                    return Response({'error':'Animal no encontrado'},status=404)
 
                 animal = {
                     'id':row[0],
@@ -173,7 +173,7 @@ def editAnimal(request,id):
                             'name':row[1]
                         })
                     
-            return Response({'success':'Animal obtenido con éxito','animal':animal,'metadata':metadata})  
+            return Response({'success':'Animal obtenido con éxito','animal':animal,'metadata':metadata},status=200)  
         
         
         if request.method == 'POST':
@@ -184,7 +184,7 @@ def editAnimal(request,id):
                 first_field = list(serializer.errors.keys())[0]
                 first_error = serializer.errors[first_field][0]
 
-                return Response({'error':first_error})   
+                return Response({'error':first_error},status=400)   
 
 
 
@@ -219,8 +219,8 @@ def editAnimal(request,id):
                 query = 'UPDATE animal_types SET id_type = %s WHERE id_animal = %s'
                 cursor.execute(query,[type,id])
 
-            return Response({'success':'Datos enviados con éxito'})  
+            return Response({'success':'Datos enviados con éxito'},status=200)  
     
     except Exception as err:
         print(err)
-        return Response({'error':'Error al editar al animal'}) 
+        return Response({'error':'Error al editar al animal'},status=500) 
