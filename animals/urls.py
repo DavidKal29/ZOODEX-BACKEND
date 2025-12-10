@@ -13,11 +13,8 @@ urlpatterns = [
     path('getTypeAnimals/<str:name>/<str:page>',views.getTypeAnimals,name='getTypeAnimals'),
     path('getAnimal/<str:name>', views.getAnimal, name='getAnimal'),
     path('getSearchAnimals/', views.getSearchAnimals, name='getSearchAnimals'),
-    path('login/',views.login,name='login'),
     path('dashboard/',views.dashboard,name='dashboard'),
     path('logout/',views.logout,name='logout'),
     path('editProfile/',views.editProfile,name='editProfile'),
-    path('forgotPassword/',views.forgotPassword,name='forgotPassword'),
-    path('changePassword/<str:token>',views.changePassword,name='changePassword'),
     path('editAnimal/<int:id>',views.editAnimal,name='editAnimal'),
 ]
