@@ -12,7 +12,10 @@ def getSearchAnimals(request):
     try:
         search = request.data.get('search')
 
-        search = search.strip()
+        search = search.replace('.','')
+        search = search.replace(',','')
+
+        search = ' '.join(search.split()).strip() 
 
         if search[0].isdigit():
             new_search = ''
