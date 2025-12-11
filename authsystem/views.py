@@ -60,7 +60,14 @@ def login(request):
 
                     response = Response({'success':'Usuario logueado con éxito','userID':user['id']},status=200)
 
-                    response.set_cookie('token',token,httponly=True,secure=False,samesite='lax',max_age=36000)
+                    response.set_cookie(
+                        'token',
+                        token,
+                        httponly=bool(os.getenv('COOKIE_HTTPONLY')),
+                        secure=bool(os.getenv('COOKIE_SECURE')),
+                        samesite=os.getenv('COOKIE_SAMESITE'),
+                        max_age=36000
+                    )
 
                     return response
 
