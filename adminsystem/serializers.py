@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.utils.html import escape
 import re
+from decimal import Decimal
 
 
 #Escapará los datos
@@ -133,7 +134,7 @@ class EditAnimalSerializer(serializers.Serializer):
     weight = serializers.DecimalField(
         max_digits=8,
         decimal_places=2,
-        min_value=0.01,
+        min_value=Decimal('0.01'),
         max_value=200000,
         required=True,
         error_messages={
@@ -148,7 +149,7 @@ class EditAnimalSerializer(serializers.Serializer):
     height = serializers.DecimalField(
         max_digits=5,
         decimal_places=2,
-        min_value=0.01,
+        min_value=Decimal('0.01'),
         max_value=30,
         required=True,
         error_messages={
@@ -163,7 +164,7 @@ class EditAnimalSerializer(serializers.Serializer):
     speed = serializers.DecimalField(
         max_digits=5,
         decimal_places=2,
-        min_value=0.01,
+        min_value=Decimal('0.01'),
         max_value=400,
         required=True,
         error_messages={
