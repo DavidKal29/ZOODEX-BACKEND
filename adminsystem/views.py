@@ -5,6 +5,10 @@ from django.db import connection
 from django.contrib.auth.hashers import make_password,check_password
 from dotenv import load_dotenv
 from .serializers import EditAnimalSerializer, EditProfileSerializer
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 load_dotenv()
 @api_view(['GET'])
@@ -39,7 +43,11 @@ def dashboard(request):
 def logout(request):
     try:
         response = Response({'success':'Sesión cerrada con éxito'},status=200)
-        response.delete_cookie('token')
+        response.delete_cookie(
+            'token',
+            path = '/',
+            samesite = os.getenv('COOKIE_SAMESITE'),
+        )
         return response
     
 
