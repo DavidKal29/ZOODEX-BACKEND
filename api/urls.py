@@ -16,8 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.http import JsonResponse
+
+def indexRoute(request):
+    return JsonResponse({'message':'Api Funcionando'})
 
 urlpatterns = [
+    path('',indexRoute),
     path('admin/', admin.site.urls),
     path('animals/',include('animals.urls')),
     path('authsystem/',include('authsystem.urls')),
