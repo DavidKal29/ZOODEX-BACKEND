@@ -30,7 +30,7 @@ const getAllAnimals = async (req,res)=>{
 
         const offset = 30 * (page - 1)
 
-        const [animals] = await conn.query(consulta, offset)
+        const [animals] = await conn.query(consulta, [offset])
 
         let total = 0
 
