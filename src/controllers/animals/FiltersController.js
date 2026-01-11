@@ -49,7 +49,7 @@ const getSubCategories = async (req,res)=>{
         let name = req.params.name
         name = name.toUpperCase()
 
-        let conn = await pool.getConnection()
+        conn = await pool.getConnection()
 
         const consulta = `
             SELECT sc.* FROM categories as c
@@ -90,7 +90,7 @@ const getSubcategoryAnimals = async (req,res)=>{
         let name = req.params.name
         name = name.toUpperCase()
 
-        let conn = await pool.getConnection()
+        conn = await pool.getConnection()
 
         const consulta = `
             SELECT a.id, a.name, c.name, sc.name, a.image, t.name, t.color
@@ -193,7 +193,7 @@ const getDietAnimals = async (req,res)=>{
     } catch (error) {
         console.log(error);
 
-        return res.status(500).json({error:'Error al obtener los animales de esa subcategoria'})
+        return res.status(500).json({error:'Error al obtener los animales de esa dieta'})
         
     }finally{
         if (conn) {
@@ -263,7 +263,7 @@ const getTypeAnimals = async (req,res)=>{
     } catch (error) {
         console.log(error);
 
-        return res.status(500).json({error:'Error al obtener los animales de esa subcategoria'})
+        return res.status(500).json({error:'Error al obtener los animales de ese tipo'})
         
     }finally{
         if (conn) {
