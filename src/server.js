@@ -12,14 +12,15 @@ const adminRoutes = require('./routes/admin')
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+app.use(cookieParser())
 app.use(cors({
     origin:process.env.FRONTEND_URL,
     credentials:true
 }))
 
 app.use('/animals',animalsRoutes)
-app.use('/auth',authRoutes)
-app.use('/admin',adminRoutes)
+app.use('/authsystem',authRoutes)
+app.use('/adminsystem',adminRoutes)
 
 
 app.get('/',(req,res)=>{
