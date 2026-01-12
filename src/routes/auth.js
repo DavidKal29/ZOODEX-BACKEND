@@ -3,7 +3,7 @@ const router = express.Router()
 const {login,forgotPassword,changePassword} = require('../controllers/AuthController')
 
 const ValidatorMiddleware = require('../middlewares/ValidatorMiddleware')
-const ForgotPasswordMiddleware = require('../middlewares/forgotPasswordMiddleware')
+const ForgotPasswordMiddleware = require('../middlewares/ForgotPasswordMiddleware')
 
 const LoginValidator = require('../Validators/LoginValidator')
 const ForgotPasswordValidator = require('../Validators/ForgotPasswordValidator')
