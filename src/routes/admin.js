@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const {dashboard} = require('../controllers/AdminController')
+const {dashboard,logout} = require('../controllers/AdminController')
 const AdminMiddleware = require('../middlewares/AdminMiddleware')
 
 
 router.get('/dashboard',AdminMiddleware,dashboard)
+router.get('/logout',AdminMiddleware,logout)
 
 
 
