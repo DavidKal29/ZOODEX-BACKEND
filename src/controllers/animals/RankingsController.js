@@ -74,7 +74,8 @@ const getFullRanking = async (req,res)=>{
         const feature = features[index]
 
         const consulta = `
-            SELECT COUNT(*) OVER() as counter, a.${feature},a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+            SELECT COUNT(*) OVER() as counter, a.${feature},a.id, a.name, 
+            c.name as category, sc.name as subcategory, a.image, t.name as type, t.color as color
             FROM animals as a
             INNER JOIN animal_types as at
             ON a.id = at.id_animal

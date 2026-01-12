@@ -11,7 +11,7 @@ const getAnimal = async (req,res)=>{
         const consulta = `
             SELECT a.id, a.name, a.description, a.inteligence, a.height, a.weight,
                 a.speed, a.danger, a.longevity, a.image,
-                c.name, sc.name, t.name, t.color, d.name
+                c.name as category, sc.name as subcategory, t.name as type, t.color as color, d.name as diet
             FROM animals as a
             INNER JOIN animal_types as at
             ON a.id = at.id_animal

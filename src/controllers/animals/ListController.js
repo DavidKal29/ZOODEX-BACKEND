@@ -13,7 +13,7 @@ const getAllAnimals = async (req,res)=>{
     
         const consulta = `
             SELECT COUNT(*) OVER() as counter,
-            a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+            a.id, a.name, c.name as category, sc.name as subcategory, a.image, t.name as type, t.color
             FROM animals as a
             INNER JOIN animal_types as at
             ON a.id = at.id_animal
@@ -71,7 +71,7 @@ const getRandomAnimals = async (req,res)=>{
         conn = await pool.getConnection()
     
         const consulta = `
-            SELECT a.id, a.name, c.name, sc.name, a.image, t.name, t.color
+            SELECT a.id, a.name as name, c.name as category, sc.name as subcategory, a.image, t.name as type, t.color as color
             FROM animals as a
             INNER JOIN animal_types as at
             ON a.id = at.id_animal

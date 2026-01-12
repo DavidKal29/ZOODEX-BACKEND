@@ -17,7 +17,7 @@ router.get('/getTypeAnimals/:name/:page',getTypeAnimals)
 router.get('/getAnimal/:name',getAnimal)
 router.get('/getTop5Rankings',getTop5Rankings)
 router.get('/getFullRanking/:name/:page',getFullRanking)
-router.get('/getSearchAnimals/:search',getSearchAnimals)
+router.post('/getSearchAnimals',getSearchAnimals)
 
 
 
