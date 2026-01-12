@@ -39,7 +39,7 @@ const logout = async (req,res)=>{
     } catch (error) {
         console.log(error);
 
-        return res.status(500).json({error:'Error al obtener al cerrar sesión'})
+        return res.status(500).json({error:'Error al cerrar sesión'})
         
     }
 }
@@ -96,7 +96,78 @@ const editProfile = async (req,res)=>{
     } catch (error) {
         console.log(error);
 
-        return res.status(500).json({error:'Error al iniciar sesión'})
+        return res.status(500).json({error:'Error al editar el perfil'})
+        
+    }finally{
+        if (conn) {
+            conn.release()
+        }
+    }
+}
+
+const getEditAnimal = async (req,res)=>{
+    let conn
+    try {
+        conn = await pool.getConnection()
+
+        const id = req.params.id
+
+        const consulta = `
+            SELECT a.id, a.name, a.description, a.inteligence, a.height, a.weight,
+            a.speed, a.danger, a.longevity, a.image,
+            c.name as category, sc.id as subcategory, t.id as type, t.color as color, d.id as diet
+            FROM animals as a
+            INNER JOIN animal_types as at
+            ON a.id = at.id_animal
+            INNER JOIN types as t
+            ON at.id_type = t.id
+            INNER JOIN subcategories as sc
+            ON a.id_subcategory = sc.id
+            INNER JOIN categories as c
+            ON sc.id_category = c.id
+            INNER JOIN diets as d
+            ON a.id_diet = d.id
+            WHERE a.id = ?  
+        `
+
+        const [animals] = await conn.query(consulta, [id])
+        
+        if (animals.length === 0) {
+            return res.status(404).json({
+                error:'No se ha encontrado al animal'
+            })
+        }
+
+        const animal = animals[0]
+
+        const metadata = {}
+                
+        const queries = {
+            'subcategories':'SELECT id, name FROM subcategories',
+            'diets':'SELECT id, name FROM diets',
+            'types':'SELECT id, name FROM types'
+        }
+
+        for (const key in queries) {
+            
+            const [data] = await conn.query(queries[key])
+            
+            metadata[key] = data
+            
+        }
+
+        return res.status(200).json({
+            success:'Animal obtenido con éxito',
+            animal:animal,
+            metadata:metadata
+        })
+
+        
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json({error:'Error al obtner el animal'})
         
     }finally{
         if (conn) {
@@ -107,4 +178,4 @@ const editProfile = async (req,res)=>{
 
 
 
-module.exports = {dashboard, logout ,editProfile}
+module.exports = {dashboard, logout ,editProfile, getEditAnimal}
